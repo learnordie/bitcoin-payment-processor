@@ -6,7 +6,8 @@
   (:require [com.github.learnordie.bitcoin-core-rpc.impl.blockchain :as blockchain]
             [com.github.learnordie.bitcoin-core-rpc.impl.control :as control]
             [com.github.learnordie.bitcoin-core-rpc.impl.mining :as mining]
-            [com.github.learnordie.bitcoin-core-rpc.impl.network :as network]))
+            [com.github.learnordie.bitcoin-core-rpc.impl.network :as network]
+            [com.github.learnordie.bitcoin-core-rpc.impl.raw-transactions :as raw-transactions]))
 
 ;;; Blockchain functions
 
@@ -315,3 +316,100 @@
   "Disables/enables all p2p network activity."
   [rpc-config state]
   (network/set-network-active rpc-config state))
+
+;;; Raw transactions functions
+
+(defn analyze-psbt
+  "Analyzes and provides information about the current status of a PSBT and its inputs."
+  [rpc-config psbt]
+  (raw-transactions/analyze-psbt rpc-config psbt))
+
+(defn combine-psbt
+  "Combines multiple partially signed Bitcoin transactions into one transaction."
+  [rpc-config transactions]
+  (raw-transactions/combine-psbt rpc-config transactions))
+
+(defn combine-raw-transaction
+  "Combines multiple partially signed transactions into one transaction."
+  [rpc-config transactions]
+  (raw-transactions/combine-raw-transaction rpc-config transactions))
+
+(defn convert-to-psbt
+  "Converts a network serialized transaction to a PSBT."
+  [rpc-config hex-string & {:keys [iswitness permitsigdata] :as options}]
+  (raw-transactions/convert-to-psbt rpc-config hex-string options))
+
+(defn create-psbt
+  "Creates a transaction in the Partially Signed Transaction format."
+  [rpc-config inputs outputs & {:keys [locktime replaceable] :as options}]
+  (raw-transactions/create-psbt rpc-config inputs outputs options))
+
+(defn create-raw-transaction
+  "Creates a transaction spending the given inputs and creating new outputs."
+  [rpc-config inputs outputs & {:keys [locktime replaceable] :as options}]
+  (raw-transactions/create-raw-transaction rpc-config inputs outputs options))
+
+(defn decode-psbt
+  "Returns a JSON object representing the serialized, base64-encoded partially signed Bitcoin transaction."
+  [rpc-config psbt]
+  (raw-transactions/decode-psbt rpc-config psbt))
+
+(defn decode-raw-transaction
+  "Returns a JSON object representing the serialized, hex-encoded transaction."
+  [rpc-config hex-string & {:keys [iswitness] :as options}]
+  (raw-transactions/decode-raw-transaction rpc-config hex-string options))
+
+(defn decode-script
+  "Decodes a hex-encoded script."
+  [rpc-config hex-string]
+  (raw-transactions/decode-script rpc-config hex-string))
+
+(defn descriptor-process-psbt
+  "Updates all segwit inputs in a PSBT with information from output descriptors, the UTXO set, or the mempool."
+  [rpc-config psbt descriptors & {:keys [bip32derivs finalize sighashtype] :as options}]
+  (raw-transactions/descriptor-process-psbt rpc-config psbt descriptors options))
+
+(defn finalize-psbt
+  "Finalizes the inputs of a PSBT."
+  [rpc-config psbt & {:keys [extract] :as options}]
+  (raw-transactions/finalize-psbt rpc-config psbt options))
+
+(defn fund-raw-transaction
+  "Adds inputs to a transaction until it has enough in value to meet its out value."
+  [rpc-config hex-string & {:keys [iswitness options] :as all-options}]
+  (raw-transactions/fund-raw-transaction rpc-config hex-string all-options))
+
+(defn get-raw-transaction
+  "Returns a JSON object representing the serialized, hex-encoded transaction."
+  [rpc-config transaction-id & {:keys [blockhash verbosity] :as options}]
+  (raw-transactions/get-raw-transaction rpc-config transaction-id options))
+
+(defn join-psbts
+  "Joins multiple distinct PSBTs with different inputs and outputs into one PSBT with inputs and outputs from all of the PSBTs."
+  [rpc-config transactions]
+  (raw-transactions/join-psbts rpc-config transactions))
+
+(defn send-raw-transaction
+  "Submits raw transaction (serialized, hex-encoded) to local node and network."
+  [rpc-config hex-string & {:keys [maxburnamount maxfeerate] :as options}]
+  (raw-transactions/send-raw-transaction rpc-config hex-string options))
+
+(defn sign-raw-transaction-with-key
+  "Signs inputs for raw transaction (serialized, hex-encoded)."
+  [rpc-config hex-string private-keys & {:keys [prevtxs sighashtype] :as options}]
+  (raw-transactions/sign-raw-transaction-with-key rpc-config hex-string private-keys options))
+
+(defn submit-package
+  "Submits a package of raw transactions (serialized, hex-encoded) to local node."
+  [rpc-config package & {:keys [maxburnamount maxfeerate] :as options}]
+  (raw-transactions/submit-package rpc-config package options))
+
+(defn test-mempool-accept
+  "Returns result of mempool acceptance tests indicating if raw transaction(s) (serialized, hex-encoded) would be accepted by mempool."
+  [rpc-config transactions & {:keys [maxfeerate] :as options}]
+  (raw-transactions/test-mempool-accept rpc-config transactions options))
+
+(defn utxo-update-psbt
+  "Updates all segwit inputs and outputs in a PSBT with data from output descriptors, the UTXO set, txindex, or the mempool."
+  [rpc-config psbt & {:keys [descriptors] :as options}]
+  (raw-transactions/utxo-update-psbt rpc-config psbt options))
