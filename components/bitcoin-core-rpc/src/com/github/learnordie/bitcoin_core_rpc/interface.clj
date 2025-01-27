@@ -3,7 +3,8 @@
 ;; file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 (ns com.github.learnordie.bitcoin-core-rpc.interface
-  (:require [com.github.learnordie.bitcoin-core-rpc.impl.blockchain :as blockchain]))
+  (:require [com.github.learnordie.bitcoin-core-rpc.impl.blockchain :as blockchain]
+            [com.github.learnordie.bitcoin-core-rpc.impl.control :as control]))
 
 ;;; Blockchain functions
 
@@ -171,3 +172,35 @@
   "Verifies that a proof points to a transaction in a block."
   [rpc-config proof]
   (blockchain/verify-transaction-output-proof rpc-config proof))
+
+;;; Control functions
+
+(defn get-memory-info
+  "Returns an object containing information about memory usage."
+  [rpc-config & {:keys [mode] :as options}]
+  (control/get-memory-info rpc-config options))
+
+(defn get-rpc-info
+  "Returns details of the RPC server."
+  [rpc-config]
+  (control/get-rpc-info rpc-config))
+
+(defn help
+  "Lists all commands, or get help for a specified command."
+  [rpc-config & {:keys [command] :as options}]
+  (control/help rpc-config options))
+
+(defn logging
+  "Gets and sets the logging configuration."
+  [rpc-config & {:keys [exclude include] :as options}]
+  (control/logging rpc-config options))
+
+(defn stop
+  "Requests a graceful shutdown of Bitcoin Core."
+  [rpc-config]
+  (control/stop rpc-config))
+
+(defn uptime
+  "Returns the total uptime of the server."
+  [rpc-config]
+  (control/uptime rpc-config))
