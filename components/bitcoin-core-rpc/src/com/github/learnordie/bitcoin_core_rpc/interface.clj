@@ -7,7 +7,8 @@
             [com.github.learnordie.bitcoin-core-rpc.impl.control :as control]
             [com.github.learnordie.bitcoin-core-rpc.impl.mining :as mining]
             [com.github.learnordie.bitcoin-core-rpc.impl.network :as network]
-            [com.github.learnordie.bitcoin-core-rpc.impl.raw-transactions :as raw-transactions]))
+            [com.github.learnordie.bitcoin-core-rpc.impl.raw-transactions :as raw-transactions]
+            [com.github.learnordie.bitcoin-core-rpc.impl.signer :as signer]))
 
 ;;; Blockchain functions
 
@@ -413,3 +414,10 @@
   "Updates all segwit inputs and outputs in a PSBT with data from output descriptors, the UTXO set, txindex, or the mempool."
   [rpc-config psbt & {:keys [descriptors] :as options}]
   (raw-transactions/utxo-update-psbt rpc-config psbt options))
+
+;;; Signer functions
+
+(defn enumerate-signers
+  "Returns a list of external signers from `-signer`."
+  [rpc-config]
+  (signer/enumerate-signers rpc-config))
