@@ -8,7 +8,8 @@
             [com.github.learnordie.bitcoin-core-rpc.impl.mining :as mining]
             [com.github.learnordie.bitcoin-core-rpc.impl.network :as network]
             [com.github.learnordie.bitcoin-core-rpc.impl.raw-transactions :as raw-transactions]
-            [com.github.learnordie.bitcoin-core-rpc.impl.signer :as signer]))
+            [com.github.learnordie.bitcoin-core-rpc.impl.signer :as signer]
+            [com.github.learnordie.bitcoin-core-rpc.impl.util :as util]))
 
 ;;; Blockchain functions
 
@@ -421,3 +422,45 @@
   "Returns a list of external signers from `-signer`."
   [rpc-config]
   (signer/enumerate-signers rpc-config))
+
+;;; Util functions
+
+(defn create-multisig
+  "Creates a multi-signature address with `n` signature of `m` keys required."
+  [rpc-config nrequired keys & {:keys [address-type] :as options}]
+  (util/create-multisig rpc-config nrequired keys options))
+
+(defn derive-addresses
+  "Derives one or more addresses correspondingto an output descriptor."
+  [rpc-config descriptor & {:keys [range] :as options}]
+  (util/derive-addresses rpc-config descriptor options))
+
+(defn estimate-smart-fee
+  "Estimates the approximate fee per kilobyte needed for a transaction to begin confirmation within `conf-target` blocks if possible and returns the number of blocks for which the estimate is valid."
+  [rpc-config conf-target & {:keys [estimate-mode] :as options}]
+  (util/estimate-smart-fee rpc-config conf-target options))
+
+(defn get-descriptor-info
+  "Analyzes a descriptor."
+  [rpc-config descriptor]
+  (util/get-descriptor-info rpc-config descriptor))
+
+(defn get-index-info
+  "Returns the status of one or all available indeces currently running in the node."
+  [rpc-config & {:keys [index-name] :as options}]
+  (util/get-index-info rpc-config options))
+
+(defn sign-message-with-private-key
+  "Signs a message with the private key of an address."
+  [rpc-config private-key message]
+  (util/sign-message-with-private-key rpc-config private-key message))
+
+(defn validate-address
+  "Returns information about the given bitcoin address."
+  [rpc-config address]
+  (util/validate-address rpc-config address))
+
+(defn verify-message
+  "Verifies a signed message."
+  [rpc-config address signature message]
+  (util/verify-message rpc-config address signature message))
