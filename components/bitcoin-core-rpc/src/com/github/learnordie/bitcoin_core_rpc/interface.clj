@@ -5,7 +5,8 @@
 (ns com.github.learnordie.bitcoin-core-rpc.interface
   (:require [com.github.learnordie.bitcoin-core-rpc.impl.blockchain :as blockchain]
             [com.github.learnordie.bitcoin-core-rpc.impl.control :as control]
-            [com.github.learnordie.bitcoin-core-rpc.impl.mining :as mining]))
+            [com.github.learnordie.bitcoin-core-rpc.impl.mining :as mining]
+            [com.github.learnordie.bitcoin-core-rpc.impl.network :as network]))
 
 ;;; Blockchain functions
 
@@ -242,3 +243,75 @@
   "Decodes the given hexdata as a header and submits it as a candidate chaintip if valid."
   [rpc-config hex-data]
   (mining/submit-header rpc-config hex-data))
+
+;;; Network functions
+
+(defn add-node
+  "Attempts to add or remove a node form the addnode list or try a connection to a node once."
+  [rpc-config node command & {:keys [v2transport] :as options}]
+  (network/add-node rpc-config node command options))
+
+(defn clear-banned
+  "Clears all banned IPs."
+  [rpc-config]
+  (network/clear-banned rpc-config))
+
+(defn disconnect-node
+  "Immediately disconnects from the specified peer node."
+  [rpc-config & {:keys [address nodeid] :as options}]
+  (network/disconnect-node rpc-config options))
+
+(defn get-added-node-info
+  "Returns information about the given added node, or all added nodes (except onetry addnodes are not listed here)."
+  [rpc-config & {:keys [node] :as options}]
+  (network/get-added-node-info rpc-config options))
+
+(defn get-address-manager-info
+  "Provides information about the node's address manager by returning the number of addresses in the `new` and `tried` tables and their sum for all networks."
+  [rpc-config]
+  (network/get-address-manager-info rpc-config))
+
+(defn get-connection-count
+  "Returns the number of connections to other nodes."
+  [rpc-config]
+  (network/get-connection-count rpc-config))
+
+(defn get-network-totals
+  "Returns information about network traffic, including bytes in, bytes out, and current system time."
+  [rpc-config]
+  (network/get-network-totals rpc-config))
+
+(defn get-network-info
+  "Returns an object containing various state info regarding P2P networking."
+  [rpc-config]
+  (network/get-network-info rpc-config))
+
+(defn get-node-addresses
+  "Returns known addresses, after filtering for quality and recency."
+  [rpc-config & {:keys [count network] :as options}]
+  (network/get-node-addresses rpc-config options))
+
+(defn get-peer-info
+  "Returns data about each connected network peer as a JSON array of objects."
+  [rpc-config]
+  (network/get-peer-info rpc-config))
+
+(defn list-banned
+  "Lists all manually banned IPs/subnets."
+  [rpc-config]
+  (network/list-banned rpc-config))
+
+(defn ping
+  "Requests that a ping be sent to all other nodes, to measure ping time."
+  [rpc-config]
+  (network/ping rpc-config))
+
+(defn set-ban
+  "Attempts to add or remove an IP/subnet from the banned list."
+  [rpc-config subnet command & {:keys [absolute bantime] :as options}]
+  (network/set-ban rpc-config subnet command options))
+
+(defn set-network-active
+  "Disables/enables all p2p network activity."
+  [rpc-config state]
+  (network/set-network-active rpc-config state))
