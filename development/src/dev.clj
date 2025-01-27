@@ -3,15 +3,13 @@
 ;; file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 (ns dev
-  (:require [com.github.learnordie.config.interface :as config]
-            [com.github.learnordie.logging.interface :as log]))
+  (:require [com.github.learnordie.bitcoin-core-rpc.interface :as btc]
+            [com.github.learnordie.config.interface :as config]))
 
 (comment
 
-  (config/read-config "dev/config.edn")
-  (config/read-config "dev/config.edn" :dev)
-  (config/read-config "dev/config.edn" :prod)
+  (defonce config (config/read-config "dev/rpc-config.edn"))
 
-  (log/info "This is an info message.")
+  (btc/get-blockchain-info config)
 
   )
