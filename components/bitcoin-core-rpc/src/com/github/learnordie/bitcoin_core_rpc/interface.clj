@@ -4,7 +4,8 @@
 
 (ns com.github.learnordie.bitcoin-core-rpc.interface
   (:require [com.github.learnordie.bitcoin-core-rpc.impl.blockchain :as blockchain]
-            [com.github.learnordie.bitcoin-core-rpc.impl.control :as control]))
+            [com.github.learnordie.bitcoin-core-rpc.impl.control :as control]
+            [com.github.learnordie.bitcoin-core-rpc.impl.mining :as mining]))
 
 ;;; Blockchain functions
 
@@ -204,3 +205,40 @@
   "Returns the total uptime of the server."
   [rpc-config]
   (control/uptime rpc-config))
+
+;;; Mining functions
+
+(defn get-block-template
+  "Returns data needed to construct a block to work on."
+  [rpc-config template-request]
+  (mining/get-block-template rpc-config template-request))
+
+(defn get-mining-info
+  "Returns an object containing mining-related information."
+  [rpc-config]
+  (mining/get-mining-info rpc-config))
+
+(defn get-network-hashes-per-second
+  "Returns the estimated network hashes per second based on the last `nblocks` blocks."
+  [rpc-config & {:keys [height nblocks] :as options}]
+  (mining/get-network-hashes-per-second rpc-config options))
+
+(defn get-prioritised-transactions
+  "Returns a map of all user-created (see `prioritise-transaction`) fee deltas by transaction id, and whether the transaction is present in the mempool."
+  [rpc-config]
+  (mining/get-prioritised-transactions rpc-config))
+
+(defn prioritise-transaction
+  "Accepts the transaction into mined blocks at a higher (or lower) priority."
+  [rpc-config transaction-id fee-delta]
+  (mining/prioritise-transaction rpc-config transaction-id fee-delta))
+
+(defn submit-block
+  "Attempts to submit new block to network."
+  [rpc-config hex-data & _dummy]
+  (mining/submit-block rpc-config hex-data))
+
+(defn submit-header
+  "Decodes the given hexdata as a header and submits it as a candidate chaintip if valid."
+  [rpc-config hex-data]
+  (mining/submit-header rpc-config hex-data))
