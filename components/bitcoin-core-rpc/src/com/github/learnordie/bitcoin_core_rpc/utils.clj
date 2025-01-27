@@ -8,15 +8,20 @@
             [cheshire.core :as json]
             [hato.client :as hc]))
 
+
 (defn- transform-keys-to-kebab-case
   "Transforms the keys of a map to kebab case."
   [m]
-  (cske/transform-keys csk/->kebab-case m))
+  ;; Using a separator of \_ to avoid problems when digits are present in the keys.
+  ;; https://github.com/clj-commons/camel-snake-kebab/issues/31#issuecomment-90229445
+  (cske/transform-keys #(csk/->kebab-case % :separator \_) m))
 
 (defn- transform-keys-to-snake-case
+  ;; Using a separator of \- to avoid problems when digits are present in the keys.
+  ;; https://github.com/clj-commons/camel-snake-kebab/issues/31#issuecomment-90229445
   "Transforms the keys of a map to snake case."
   [m]
-  (cske/transform-keys csk/->snake_case m))
+  (cske/transform-keys #(csk/->snake_case % :separator \-) m))
 
 (defn rpc-call
   "Calls a Bitcoin Core RPC method with the given parameters."
