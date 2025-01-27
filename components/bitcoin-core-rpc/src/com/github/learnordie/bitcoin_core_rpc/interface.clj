@@ -3,9 +3,9 @@
 ;; file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 (ns com.github.learnordie.bitcoin-core-rpc.interface
-  (:require [com.github.learnordie.bitcoin-core-rpc.impl :as impl]))
+  (:require [com.github.learnordie.bitcoin-core-rpc.impl.blockchain :as blockchain]))
 
 (defn get-blockchain-info
   "Returns an object containing various state info regarding blockchain processing."
   [rpc-config]
-  (impl/get-blockchain-info rpc-config))
+  (blockchain/get-blockchain-info rpc-config))

@@ -2,7 +2,7 @@
 ;; License, v. 2.0. If a copy of the MPL was not distributed with this
 ;; file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-(ns dev
+(ns dev.bitcoin-core-rpc.blockchain
   (:require [com.github.learnordie.bitcoin-core-rpc.interface :as btc]
             [com.github.learnordie.config.interface :as config]))
 
@@ -13,3 +13,5 @@
   (btc/get-blockchain-info config)
 
   )
+
+
