@@ -3,7 +3,6 @@
 ;; file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 (ns com.github.learnordie.bitcoin-core-rpc.interface
-  {:clj-kondo/config '{:linters {:unused-binding {:exclude-destructured-keys-in-fn-args true}}}}
   (:require [com.github.learnordie.bitcoin-core-rpc.impl.blockchain :as blockchain]))
 
 ;;; Blockchain functions
