@@ -9,7 +9,7 @@
             [hato.client :as hc]))
 
 
-(defn- transform-keys-to-kebab-case
+(defn transform-keys-to-kebab-case
   "Transforms the keys of a map to kebab case."
   [m]
   ;; Using a separator of \_ to avoid problems when digits are present in the keys.
@@ -42,3 +42,12 @@
      (if-let [error (:error body)]
        (throw (ex-info (str "Error: " error) response))
        (-> (:result body) transform-keys-to-kebab-case)))))
+
+(defn rpc-call-for-wallet-functions
+  "Calls a Bitcoin Core RPC method with the given parameters for a specific wallet."
+  ([rpc-config wallet-name method]
+   (rpc-call-for-wallet-functions rpc-config wallet-name method []))
+  ([rpc-config wallet-name method params]
+   (let [url (str (:url rpc-config) "/wallet/" wallet-name)
+         rpc-config (assoc rpc-config :url url)]
+     (rpc-call rpc-config method params))))
