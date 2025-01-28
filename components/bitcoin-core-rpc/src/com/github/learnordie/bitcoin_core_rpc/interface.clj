@@ -10,7 +10,8 @@
             [com.github.learnordie.bitcoin-core-rpc.impl.raw-transactions :as raw-transactions]
             [com.github.learnordie.bitcoin-core-rpc.impl.signer :as signer]
             [com.github.learnordie.bitcoin-core-rpc.impl.util :as util]
-            [com.github.learnordie.bitcoin-core-rpc.impl.wallet :as wallet]))
+            [com.github.learnordie.bitcoin-core-rpc.impl.wallet :as wallet]
+            [com.github.learnordie.bitcoin-core-rpc.impl.zmq :as zmq]))
 
 ;;; Blockchain functions
 
@@ -813,3 +814,10 @@
   "Updates a PSBT with input information from our wallet and then signs inputs that we can sign for."
   [rpc-config wallet-name psbt & {:keys [bip32derivs finalize sighashtype sign] :as options}]
   (wallet/wallet-process-psbt rpc-config wallet-name psbt options))
+
+;;; ZMQ functions
+
+(defn get-zmq-notifications
+  "Returns information about the active ZeroMQ notifications."
+  [rpc-config]
+  (zmq/get-zmq-notifications rpc-config))
