@@ -3,7 +3,7 @@
 ;; file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 (ns com.github.learnordie.wallet.interface
-  (:require [com.github.learnordie.wallet.impl :as impl]))
+  (:require [com.github.learnordie.wallet.impl.wallet :as impl]))
 
 (defn create-hot-wallet
   "Creates a hot wallet."
