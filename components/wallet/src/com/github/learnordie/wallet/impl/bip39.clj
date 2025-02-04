@@ -57,7 +57,7 @@
         hash-bits (utils/byte-seq->binary-string hash)]
     (subs hash-bits 0 checksum-bits)))
 
-(defn- entropy->mnemonic
+(defn entropy->mnemonic
   "Converts entropy to a mnemonic."
   [entropy]
   (let [entropy-bits (utils/byte-seq->binary-string entropy)
