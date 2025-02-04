@@ -9,7 +9,8 @@
                                ;; development dependencies
                                org.clojure/clojure {:mvn/version "1.12.0"}}}
 
-            :test {:extra-paths ["components/wallet/test"]}
+            :test {:extra-paths ["components/wallet/test"]
+                   :extra-deps {commons-codec/commons-codec {:mvn/version "1.18.0"}}}
 
             :poly {:main-opts ["-m" "polylith.clj.core.poly-cli.core"]
                    :extra-deps {polylith/clj-poly {:mvn/version "0.2.21"}}}}}
