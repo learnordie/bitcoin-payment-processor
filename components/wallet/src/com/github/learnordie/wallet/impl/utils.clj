@@ -10,14 +10,17 @@
   (bit-and 0xFF byte))
 
 (defn- pad-binary-string
-  "Ensures the binary string is zero-padded to 8 bits."
-  [binary-str]
-  (format "%08d" (Integer/parseInt binary-str)))
+  "Ensures the binary string is zero-padded to the specified length."
+  [binary-str length]
+  (if (>= (count binary-str) length)
+    binary-str
+    (let [formatter (str "%0" length "d")]
+      (format formatter (Integer/parseInt binary-str)))))
 
 (defn- byte->binary-string
   "Converts a single byte to its 8-bit binary string representation, ensuring proper padding."
   [byte]
-  (pad-binary-string (Integer/toBinaryString (unsigned-byte byte))))
+  (pad-binary-string (Integer/toBinaryString (unsigned-byte byte)) 8))
 
 (defn byte-seq->binary-string
   "Converts a byte sequence to a binary string."
@@ -28,3 +31,42 @@
   "Converts a sequence of binary characters (\0, \1) into an integer."
   [binary-seq]
   (Integer/parseInt (apply str binary-seq) 2))
+
+(defn- word->index
+  "Computes the index of a word in the wordlist.
+
+  Returns -1 if the word is not found."
+  [word wordlist]
+  (.indexOf wordlist word))
+
+(defn- word->binary-string
+  "Converts a word to its binary representation."
+  [word wordlist]
+  (let [index (word->index word wordlist)]
+    (if (neg? index)
+      nil
+      (pad-binary-string (Integer/toBinaryString index) 11))))
+
+(defn word-seq->binary-string
+  "Converts a sequence of words to a binary string."
+  [words wordlist]
+  (apply str (map #(word->binary-string % wordlist) words)))
+
+(defn- binary-string->byte
+  "Converts a single 8-bit binary string to a byte."
+  [binary-str]
+  (let [unsigned-int (Integer/parseInt binary-str 2)]
+    (if (>= unsigned-int 128)
+      (- unsigned-int 256)
+      unsigned-int)))
+
+(defn- binary-chunks
+  "Splits a binary string into 8 bit chunks."
+  [binary-str]
+  (map #(apply str %) (partition 8 binary-str)))
+
+(defn binary-string->byte-seq
+  "Converts a binary string to a sequence of bytes."
+  [binary-str]
+  (let [binary-str-groups (binary-chunks binary-str)]
+    (byte-array (map binary-string->byte binary-str-groups))))

@@ -11,11 +11,15 @@
 
 (set! *warn-on-reflection* true)
 
+;;; Wordlist
+
 (def ^:private wordlist
   (-> "wallet/bip39-wordlist.txt"
       io/resource
       slurp
       str/split-lines))
+
+;;; Entropy generation
 
 (defn- secure-random-number-generator
   "Creates a secure random number generator."
@@ -41,6 +45,8 @@
   [num-bits]
   (let [num-bytes (quot num-bits 8)]
     (random-bytes num-bytes)))
+
+;;; Mnemonic generation
 
 (defn- compute-sha256
   "Computes the SHA-256 hash of the specified byte sequence."
@@ -78,10 +84,74 @@
    (let [entropy (generate-entropy strength)]
      (entropy->mnemonic entropy))))
 
+;;; Mnemonic validation
+
+(defn- normalize-mnemonic
+  "Normalizes a mnemonic by removing leading/trailing whitespace and converting to lowercase."
+  [mnemonic]
+  (str/trim (str/lower-case mnemonic)))
+
+(defn- split-mnemonic
+  "Splits a mnemonic into words."
+  [mnemonic]
+  (str/split mnemonic #"\s+"))
+
+(defn- valid-count?
+  "Checks if the word count is valid."
+  [words]
+  (contains? #{12 15 18 21 24} (count words)))
+
+(defn- words-in-wordlist?
+  "Checks if all words are in the BIP-39 wordlist."
+  [words]
+  (every? (set wordlist) words))
+
+(defn- words->binary-string
+  "Converts a sequence of words to a binary string."
+  [words]
+  (utils/word-seq->binary-string words wordlist))
+
+(defn- checksum-length
+  "Determines the checksum length based on the binary string length."
+  [binary-str]
+  (let [length (count binary-str)]
+    (cond
+      (= length 132) 4
+      (= length 165) 5
+      (= length 198) 6
+      (= length 231) 7
+      (= length 264) 8
+      :else (throw (IllegalArgumentException. "Invalid binary string length.")))))
+
+(defn- extract-checksum
+  "Extracts the checksum from the binary string."
+  [binary-str]
+  (let [length (checksum-length binary-str)
+        start-index (- (count binary-str) length)]
+    (subs binary-str start-index)))
+
+(defn- valid-checksum?
+  "Checks if the checksum is valid."
+  [binary-str]
+  (let [checksum (extract-checksum binary-str)
+        entropy-length-in-bits (- (count binary-str) (count checksum))
+        entropy-binary-str (subs binary-str 0 entropy-length-in-bits)
+        entropy (utils/binary-string->byte-seq entropy-binary-str)
+        expected-checksum (bip39-checksum entropy)]
+    (= checksum expected-checksum)))
+
 (defn valid-mnemonic?
   "Checks if a mnemonic is valid."
   [mnemonic]
-  :not-implemented)
+  (assert (string? mnemonic)
+          "Mnemonic must be a string.")
+  (let [normalized-mnemonic (normalize-mnemonic mnemonic)
+        words (split-mnemonic normalized-mnemonic)]
+    (and (valid-count? words)
+         (words-in-wordlist? words)
+         (valid-checksum? (words->binary-string words)))))
+
+;;; Seed generation
 
 (defn mnemonic->seed
   "Converts a mnemonic to a seed."

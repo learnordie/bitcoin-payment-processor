@@ -60,3 +60,21 @@
            (sut/entropy->mnemonic (hex->bytes "c10ec20dc3cd9f652c7fac2f1230f7a3c828389a14392f05"))))
   (t/is (= "void come effort suffer camp survey warrior heavy shoot primary clutch crush open amazing screen patrol group space point ten exist slush involve unfold"
            (sut/entropy->mnemonic (hex->bytes "f585c11aec520db57dd353c69554b21a89b20fb0650966fa0a9d6f74fd989d8f")))))
+
+(t/deftest valid-mnemonic?
+  (t/testing "Valid mnemonics"
+    (t/is (sut/valid-mnemonic? "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about"))
+    (t/is (sut/valid-mnemonic? "legal winner thank year wave sausage worth useful legal winner thank yellow"))
+    (t/is (sut/valid-mnemonic? "zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo wrong"))
+    ;; case insensitive
+    (t/is (sut/valid-mnemonic? "ZOO zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo wrong")))
+  (t/testing "Invalid mnemonics"
+    (t/is (false? (sut/valid-mnemonic? "tht/is t/is not a valid mnemonic")))
+    (t/is (false? (sut/valid-mnemonic? "abandon abandon abandon")))
+    (t/is (false? (sut/valid-mnemonic? "legal winner thank year wave sausage worth useful legal winner thank thank")))
+    (t/is (false? (sut/valid-mnemonic? "zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo"))))
+  (t/testing "Edge cases"
+    (t/is (false? (sut/valid-mnemonic? "")))
+    (t/is (false? (sut/valid-mnemonic? " ")))
+    (t/is (thrown? java.lang.AssertionError (sut/valid-mnemonic? nil)))
+    (t/is (thrown? java.lang.AssertionError (sut/valid-mnemonic? ["abandon" "abandon" "abandon" "abandon" "abandon" "abandon" "abandon" "abandon" "abandon" "abandon" "abandon" "about"])))))
