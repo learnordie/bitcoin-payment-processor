@@ -2,7 +2,8 @@
 ;; License, v. 2.0. If a copy of the MPL was not distributed with this
 ;; file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-(ns com.github.learnordie.wallet.impl.utils)
+(ns com.github.learnordie.wallet.impl.utils
+  (:require [clojure.string :as str]))
 
 (set! *warn-on-reflection* true)
 
@@ -27,12 +28,12 @@
 (defn byte-seq->binary-string
   "Converts a byte sequence to a binary string."
   [bytes]
-  (apply str (map byte->binary-string bytes)))
+  (str/join (map byte->binary-string bytes)))
 
 (defn binary-seq->int
   "Converts a sequence of binary characters (\0, \1) into an integer."
   [binary-seq]
-  (Integer/parseInt (apply str binary-seq) 2))
+  (Integer/parseInt (str/join binary-seq) 2))
 
 (defn- word->index
   "Computes the index of a word in the wordlist.
@@ -45,14 +46,13 @@
   "Converts a word to its binary representation."
   [word wordlist]
   (let [index (word->index word wordlist)]
-    (if (neg? index)
-      nil
+    (when-not (neg? index)
       (pad-binary-string (Integer/toBinaryString index) 11))))
 
 (defn word-seq->binary-string
   "Converts a sequence of words to a binary string."
   [words wordlist]
-  (apply str (map #(word->binary-string % wordlist) words)))
+  (str/join (map #(word->binary-string % wordlist) words)))
 
 (defn- binary-string->byte
   "Converts a single 8-bit binary string to a byte."
@@ -65,7 +65,7 @@
 (defn- binary-chunks
   "Splits a binary string into 8 bit chunks."
   [binary-str]
-  (map #(apply str %) (partition 8 binary-str)))
+  (map str/join (partition 8 binary-str)))
 
 (defn binary-string->byte-seq
   "Converts a binary string to a sequence of bytes."
@@ -81,4 +81,4 @@
 (defn byte-seq->hex-string
   "Converts a byte sequence to a hexadecimal string."
   [bytes]
-  (apply str (map byte->hex bytes)))
+  (str/join (map byte->hex bytes)))

@@ -13,4 +13,7 @@
                    :extra-deps {commons-codec/commons-codec {:mvn/version "1.18.0"}}}
 
             :poly {:main-opts ["-m" "polylith.clj.core.poly-cli.core"]
-                   :extra-deps {polylith/clj-poly {:mvn/version "0.2.21"}}}}}
+                   :extra-deps {polylith/clj-poly {:mvn/version "0.2.21"}}}
+            :splint {:extra-deps {io.github.noahtheduke/splint {:mvn/version "1.19.0"}
+                                  org.clojure/clojure {:mvn/version "1.11.1"}}
+                     :main-opts ["-m" "noahtheduke.splint"]}}}
