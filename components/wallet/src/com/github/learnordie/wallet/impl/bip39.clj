@@ -7,7 +7,11 @@
             [clojure.string :as str]
             [com.github.learnordie.logging.interface :as log]
             [com.github.learnordie.wallet.impl.utils :as utils])
-  (:import [java.security MessageDigest NoSuchAlgorithmException SecureRandom]))
+  (:import [java.text Normalizer Normalizer$Form]
+           [java.security MessageDigest NoSuchAlgorithmException SecureRandom]
+           [org.bouncycastle.crypto.digests SHA512Digest]
+           [org.bouncycastle.crypto.generators PKCS5S2ParametersGenerator]
+           [org.bouncycastle.crypto.params KeyParameter]))
 
 (set! *warn-on-reflection* true)
 
@@ -153,9 +157,32 @@
 
 ;;; Seed generation
 
+(defn- nfkd-normalize
+  "Normalizes a string using the NFKD normalization form."
+  [string]
+  (Normalizer/normalize string Normalizer$Form/NFKD))
+
+(defn- generate-salt
+  "Generates a salt from a passphrase."
+  [passphrase]
+  (str "mnemonic" (nfkd-normalize passphrase)))
+
+(defn- derive-seed
+  "Derives a seed from a mnemonic and salt."
+  [mnemonic salt]
+  (let [mnemonic-bytes (.getBytes ^String mnemonic "UTF-8")
+        salt-bytes (.getBytes ^String salt "UTF-8")
+        generator (PKCS5S2ParametersGenerator. (SHA512Digest.))]
+    (.init generator mnemonic-bytes salt-bytes 2048)
+    (let [key-params (.generateDerivedMacParameters generator 512)]
+      (.getKey ^KeyParameter key-params))))
+
 (defn mnemonic->seed
   "Converts a mnemonic to a seed."
   ([mnemonic]
    (mnemonic->seed mnemonic ""))
   ([mnemonic passphrase]
-   :not-implemented))
+   (let [mnemonic (normalize-mnemonic mnemonic)
+         salt (generate-salt passphrase)
+         seed-bytes (derive-seed mnemonic salt)]
+     (utils/byte-seq->hex-string seed-bytes))))

@@ -1,4 +1,4 @@
 {:paths ["src" "resources"]
- :deps {}
+ :deps {org.bouncycastle/bcprov-jdk18on {:mvn/version "1.80"}}
  :aliases {:test {:extra-paths ["test"]
                   :extra-deps {commons-codec/commons-codec {:mvn/version "1.18.0"}}}}}

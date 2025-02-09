@@ -70,3 +70,13 @@
   [binary-str]
   (let [binary-str-groups (binary-chunks binary-str)]
     (byte-array (map binary-string->byte binary-str-groups))))
+
+(defn- byte->hex
+  "Converts a byte to its two-character, zero-padded hexadecimal representation."
+  [byte]
+  (format "%02x" (unsigned-byte byte)))
+
+(defn byte-seq->hex-string
+  "Converts a byte sequence to a hexadecimal string."
+  [bytes]
+  (apply str (map byte->hex bytes)))
