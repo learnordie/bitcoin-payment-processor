@@ -41,7 +41,7 @@
   [length]
   (let [rng (secure-random-number-generator)
         bytes (byte-array length)]
-    (SecureRandom/.nextBytes rng bytes)
+    (.nextBytes ^SecureRandom rng bytes)
     bytes))
 
 (defn- generate-entropy

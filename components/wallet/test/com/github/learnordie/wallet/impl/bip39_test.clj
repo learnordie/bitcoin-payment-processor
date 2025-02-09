@@ -7,9 +7,11 @@
              [com.github.learnordie.wallet.impl.bip39 :as sut])
   (:import [org.apache.commons.codec.binary Hex]))
 
+(set! *warn-on-reflection* true)
+
 (defn- hex->bytes
   [str]
-  (Hex/decodeHex (String/.toCharArray str)))
+  (Hex/decodeHex (.toCharArray ^String str)))
 
 (t/deftest entropy->mnemonic
   (t/is (= "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about"

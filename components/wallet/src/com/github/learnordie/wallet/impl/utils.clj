@@ -4,6 +4,8 @@
 
 (ns com.github.learnordie.wallet.impl.utils)
 
+(set! *warn-on-reflection* true)
+
 (defn- unsigned-byte
   "Ensures the byte is treated as an unsigned 8-bit value"
   [byte]
@@ -37,7 +39,7 @@
 
   Returns -1 if the word is not found."
   [word wordlist]
-  (.indexOf wordlist word))
+  (.indexOf ^java.util.List wordlist ^String word))
 
 (defn- word->binary-string
   "Converts a word to its binary representation."
