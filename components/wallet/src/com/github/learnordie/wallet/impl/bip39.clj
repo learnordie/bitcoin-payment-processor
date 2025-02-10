@@ -162,27 +162,28 @@
   [string]
   (Normalizer/normalize string Normalizer$Form/NFKD))
 
-(defn- generate-salt
-  "Generates a salt from a passphrase."
-  [passphrase]
-  (str "mnemonic" (nfkd-normalize passphrase)))
+(defn- pbkdf2-hmac-sha512
+  "Generates a derived key using the PBKDF2 function with HMAC-SHA512 as the pseudorandom function."
+  [password salt iterations key-length]
+  (let [generator (PKCS5S2ParametersGenerator. (SHA512Digest.))]
+    (.init generator (utils/str->bytes password) (utils/str->bytes salt) iterations)
+    (let [key-params (.generateDerivedMacParameters generator (* key-length 8))]
+      (.getKey ^KeyParameter key-params))))
 
 (defn- derive-seed
-  "Derives a seed from a mnemonic and salt."
-  [mnemonic salt]
-  (let [mnemonic-bytes (.getBytes ^String mnemonic "UTF-8")
-        salt-bytes (.getBytes ^String salt "UTF-8")
-        generator (PKCS5S2ParametersGenerator. (SHA512Digest.))]
-    (.init generator mnemonic-bytes salt-bytes 2048)
-    (let [key-params (.generateDerivedMacParameters generator 512)]
-      (.getKey ^KeyParameter key-params))))
+  "Derives a BIP-39 seed from a mnemonic and passphrase."
+  [mnemonic passphrase]
+  (let [mnemonic (normalize-mnemonic mnemonic)
+        passphrase (nfkd-normalize passphrase)
+        salt (str "mnemonic" passphrase)
+        iterations 2048
+        key-length 64]
+    (pbkdf2-hmac-sha512 mnemonic salt iterations key-length)))
 
 (defn mnemonic->seed
   "Converts a mnemonic to a seed."
   ([mnemonic]
    (mnemonic->seed mnemonic ""))
   ([mnemonic passphrase]
-   (let [mnemonic (normalize-mnemonic mnemonic)
-         salt (generate-salt passphrase)
-         seed-bytes (derive-seed mnemonic salt)]
+   (let [seed-bytes (derive-seed mnemonic passphrase)]
      (utils/byte-seq->hex-string seed-bytes))))

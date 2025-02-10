@@ -82,3 +82,8 @@
   "Converts a byte sequence to a hexadecimal string."
   [bytes]
   (str/join (map byte->hex bytes)))
+
+(defn str->bytes
+  "Converts a string to a byte sequence."
+  [string]
+  (.getBytes ^String string "UTF-8"))
