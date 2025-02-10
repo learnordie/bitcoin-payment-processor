@@ -69,7 +69,7 @@
     (t/is (sut/valid-mnemonic? "legal winner thank year wave sausage worth useful legal winner thank yellow"))
     (t/is (sut/valid-mnemonic? "zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo wrong"))
     ;; case insensitive
-    (t/is (sut/valid-mnemonic? "ZOO zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo wrong")))
+    (t/is (sut/valid-mnemonic? "ABANDON abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about")))
   (t/testing "Invalid mnemonics"
     (t/is (false? (sut/valid-mnemonic? "tht/is t/is not a valid mnemonic")))
     (t/is (false? (sut/valid-mnemonic? "abandon abandon abandon")))
